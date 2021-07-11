@@ -57,14 +57,17 @@ export default function TrackResults({
   spotifyApi,
   selected,
   setSelected,
+  setLyrics,
 }: {
   search: string;
   setSearch: (value: string) => void;
   accessToken: string | null;
   spotifyApi: any;
   selected: Track | null;
-  setSelected: (select: any) => any;
-}): ReactElement {
+  setSelected: (select: any) => void;
+  setLyrics: (lyrics: string) => void;
+}): ReactElement | null {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [trackResults, setTrackResults] = useState<any>([]);
 
   useEffect(() => {
@@ -116,9 +119,12 @@ export default function TrackResults({
           );
         }
       })
-      .catch((err: any) => console.error(err));
+      .catch((err: any) => console.error(err))
+      .finally(() => setIsLoading(false));
   }, [search]);
 
+  if (!search) return null;
+  if (isLoading && search.length > 0) return <div>Loading...</div>;
   return (
     <StyledTrackResults>
       {trackResults.map(
@@ -137,12 +143,17 @@ export default function TrackResults({
         }) => (
           <StyledTrackResult
             key={uri}
-            onClick={() =>
-              setSelected({ trackName, artist, uri, explicit, image })
-            }
+            onClick={() => {
+              setLyrics("");
+              setSearch("");
+              setSelected({ trackName, artist, uri, explicit, image });
+            }}
             onKeyDown={(e: any) => {
-              if (e.keyCode === 13)
+              if (e.keyCode === 13) {
+                setLyrics("");
+                setSearch("");
                 setSelected({ trackName, artist, uri, explicit, image });
+              }
             }}
             tabIndex={0}
             className={
