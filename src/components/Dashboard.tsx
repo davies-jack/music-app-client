@@ -37,13 +37,67 @@ function SearchForm({
 
 export default function Dashboard({ code }: Props): ReactElement {
   const [search, setSearch] = useState<string>("");
-  const [trackResults, setTrackResults] = useState([]);
+  const [trackResults, setTrackResults] = useState<any>([]);
 
   const accessToken = useAuth(code);
 
   useEffect(() => {
     if (accessToken) spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    if (!search) {
+      setTrackResults([]);
+      return;
+    }
+
+    spotifyApi
+      .searchTracks(search)
+      .then(({ body: { tracks } }) => {
+        if (typeof tracks !== "undefined") {
+          console.log(tracks.items);
+
+          setTrackResults(
+            tracks.items.map(
+              ({
+                name,
+                artists,
+                uri,
+                explicit,
+                album: { images },
+              }: {
+                name: string;
+                artists: { name: string }[];
+                uri: string;
+                explicit: boolean;
+                album: {
+                  images: any[];
+                };
+              }) => {
+                const smallestAlbumCover = images.reduce(
+                  (
+                    smallest: { height: number; url: string; width: number },
+                    current: { height: number; url: string; width: number }
+                  ) => {
+                    if (current.height < smallest.height) return current;
+                    return smallest;
+                  }
+                );
+                return {
+                  trackName: name,
+                  artist: artists[0].name,
+                  uri,
+                  explicit,
+                  image: smallestAlbumCover.url,
+                };
+              }
+            )
+          );
+        }
+      })
+      .catch((err) => console.error(err));
+  }, [search]);
 
   return (
     <div>
@@ -53,7 +107,28 @@ export default function Dashboard({ code }: Props): ReactElement {
       </p>
       <SearchForm search={search} setSearch={setSearch} />
 
-      <div className="searchResults"></div>
+      <div className="searchResults">
+        {trackResults.map(
+          ({
+            trackName,
+            artist,
+            uri,
+            explicit,
+            image,
+          }: {
+            trackName: string;
+            artist: string;
+            uri: string;
+            explicit: boolean;
+            image: string;
+          }) => (
+            <div>
+              <img src={image} />
+              <h3>{trackName}</h3>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }
