@@ -34,6 +34,7 @@ export default function SearchForm({
         name="search-field"
         id="search-field"
         onChange={handleSearchChange}
+        value={search}
       />
     </StyledSearchForm>
   );
