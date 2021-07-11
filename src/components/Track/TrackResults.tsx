@@ -1,4 +1,47 @@
 import { useState, useEffect, ReactElement } from "react";
+import styled from "styled-components";
+
+const StyledTrackResults = styled.div`
+  width: 80%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  @media (max-width: 580px) {
+    grid-template-columns: 1fr;
+  }
+  @media (max-width: 768px) {
+    width: 99%;
+  }
+`;
+
+const StyledTrackResult = styled.div`
+  margin: 1em;
+  border: 1px solid #374151;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  img {
+    margin-right: 1em;
+    padding-left: 0.6em;
+    height: 64px;
+    width: 64px;
+  }
+
+  > div {
+    h3 {
+      font-weight: normal;
+      margin-bottom: 0;
+    }
+    p {
+      margin-top: 0.6em;
+      font-size: 0.8em;
+      color: #999;
+    }
+  }
+`;
+
 export default function TrackResults({
   search,
   setSearch,
@@ -65,7 +108,7 @@ export default function TrackResults({
   }, [search]);
 
   return (
-    <div className="searchResults">
+    <StyledTrackResults>
       {trackResults.map(
         ({
           trackName,
@@ -80,12 +123,15 @@ export default function TrackResults({
           explicit: boolean;
           image: string;
         }) => (
-          <div key={uri}>
+          <StyledTrackResult key={uri}>
             <img src={image} alt={`Cover art for ${trackName}`} />
-            <h3>{trackName}</h3>
-          </div>
+            <div>
+              <h3>{trackName}</h3>
+              <p>{artist}</p>
+            </div>
+          </StyledTrackResult>
         )
       )}
-    </div>
+    </StyledTrackResults>
   );
 }
