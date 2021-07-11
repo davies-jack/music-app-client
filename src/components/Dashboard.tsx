@@ -42,7 +42,7 @@ export default function Dashboard({ code }: Props): ReactElement {
   const accessToken = useAuth(code);
 
   useEffect(() => {
-    spotifyApi.setAccessToken(accessToken);
+    if (accessToken) spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
   return (
