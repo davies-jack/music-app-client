@@ -42,16 +42,28 @@ const StyledTrackResult = styled.div`
   }
 `;
 
+type Track = {
+  trackName: string;
+  artist: string;
+  uri: string;
+  explicit: boolean;
+  image: string;
+};
+
 export default function TrackResults({
   search,
   setSearch,
   accessToken,
   spotifyApi,
+  selected,
+  setSelected,
 }: {
   search: string;
   setSearch: (value: string) => void;
   accessToken: string | null;
   spotifyApi: any;
+  selected: Track | null;
+  setSelected: (select: any) => any;
 }): ReactElement {
   const [trackResults, setTrackResults] = useState<any>([]);
 
@@ -123,7 +135,12 @@ export default function TrackResults({
           explicit: boolean;
           image: string;
         }) => (
-          <StyledTrackResult key={uri}>
+          <StyledTrackResult
+            key={uri}
+            onClick={() =>
+              setSelected({ trackName, artist, uri, explicit, image })
+            }
+          >
             <img src={image} alt={`Cover art for ${trackName}`} />
             <div>
               <h3>{trackName}</h3>

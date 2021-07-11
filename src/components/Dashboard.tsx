@@ -14,6 +14,8 @@ type Props = {
 
 export default function Dashboard({ code }: Props): ReactElement {
   const [search, setSearch] = useState<string>("");
+  const [selected, setSelected] = useState(null);
+
   const accessToken = useAuth(code);
 
   useEffect(() => {
@@ -33,6 +35,8 @@ export default function Dashboard({ code }: Props): ReactElement {
         setSearch={setSearch}
         accessToken={accessToken}
         spotifyApi={spotifyApi}
+        selected={selected}
+        setSelected={setSelected}
       />
     </div>
   );
