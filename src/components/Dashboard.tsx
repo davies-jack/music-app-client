@@ -35,15 +35,16 @@ function SearchForm({
   );
 }
 
-export default function Dashboard({ code }: Props): ReactElement {
-  const [search, setSearch] = useState<string>("");
+function TrackResults({
+  search,
+  setSearch,
+  accessToken,
+}: {
+  search: string;
+  setSearch: (value: string) => void;
+  accessToken: string | null;
+}): ReactElement {
   const [trackResults, setTrackResults] = useState<any>([]);
-
-  const accessToken = useAuth(code);
-
-  useEffect(() => {
-    if (accessToken) spotifyApi.setAccessToken(accessToken);
-  }, [accessToken]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -100,35 +101,52 @@ export default function Dashboard({ code }: Props): ReactElement {
   }, [search]);
 
   return (
+    <div className="searchResults">
+      {trackResults.map(
+        ({
+          trackName,
+          artist,
+          uri,
+          explicit,
+          image,
+        }: {
+          trackName: string;
+          artist: string;
+          uri: string;
+          explicit: boolean;
+          image: string;
+        }) => (
+          <div key={uri}>
+            <img src={image} alt={`Cover art for ${trackName}`} />
+            <h3>{trackName}</h3>
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
+export default function Dashboard({ code }: Props): ReactElement {
+  const [search, setSearch] = useState<string>("");
+  const accessToken = useAuth(code);
+
+  useEffect(() => {
+    if (accessToken) spotifyApi.setAccessToken(accessToken);
+  }, [accessToken]);
+
+  return (
     <div>
       <h2>Welcome to the Dashboard</h2>
       <p>
         You're able to search for artists, or song names in the input below.
       </p>
-      <SearchForm search={search} setSearch={setSearch} />
 
-      <div className="searchResults">
-        {trackResults.map(
-          ({
-            trackName,
-            artist,
-            uri,
-            explicit,
-            image,
-          }: {
-            trackName: string;
-            artist: string;
-            uri: string;
-            explicit: boolean;
-            image: string;
-          }) => (
-            <div>
-              <img src={image} />
-              <h3>{trackName}</h3>
-            </div>
-          )
-        )}
-      </div>
+      <SearchForm search={search} setSearch={setSearch} />
+      <TrackResults
+        search={search}
+        setSearch={setSearch}
+        accessToken={accessToken}
+      />
     </div>
   );
 }
