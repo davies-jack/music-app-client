@@ -1,11 +1,13 @@
 import { useState, useEffect, ReactElement } from "react";
 import styled from "styled-components";
+import { Track } from "../../types/Track";
 
-const StyledTrackResults = styled.div`
+const StyledTrackResults = styled.div<any>`
   width: 80%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin-bottom: 5em;
   @media (max-width: 580px) {
     grid-template-columns: 1fr;
   }
@@ -14,9 +16,15 @@ const StyledTrackResults = styled.div`
   }
 `;
 
-const StyledTrackResult = styled.div`
+const StyledTrackResult = styled.div<any>`
   margin: 1em;
   border: 1px solid #374151;
+  cursor: pointer;
+
+  &.currently-playing {
+    transition: ease-in-out 0.3s;
+    border: 1px solid #6d28d9;
+  }
 
   display: flex;
   flex-direction: row;
@@ -37,18 +45,10 @@ const StyledTrackResult = styled.div`
     p {
       margin-top: 0.6em;
       font-size: 0.8em;
-      color: #999;
+      color: #4b5563;
     }
   }
 `;
-
-type Track = {
-  trackName: string;
-  artist: string;
-  uri: string;
-  explicit: boolean;
-  image: string;
-};
 
 export default function TrackResults({
   search,
@@ -140,11 +140,20 @@ export default function TrackResults({
             onClick={() =>
               setSelected({ trackName, artist, uri, explicit, image })
             }
+            onKeyDown={(e: any) => {
+              if (e.keyCode === 13)
+                setSelected({ trackName, artist, uri, explicit, image });
+            }}
+            tabIndex={0}
+            className={
+              selected !== null && selected.uri === uri && `currently-playing`
+            }
           >
             <img src={image} alt={`Cover art for ${trackName}`} />
             <div>
               <h3>{trackName}</h3>
               <p>{artist}</p>
+              <span className="explicit">{explicit && `explicit!`}</span>
             </div>
           </StyledTrackResult>
         )
