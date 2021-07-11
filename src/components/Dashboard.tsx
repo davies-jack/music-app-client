@@ -5,6 +5,7 @@ import SearchForm from "./Track/TrackSearchForm";
 import TrackResults from "./Track/TrackResults";
 import TrackPlayer from "./Track/TrackPlayer";
 import { Track } from "../types/Track";
+import TrackLyrics from "./Track/TrackLyrics";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: "e3c179bcc337497e838636714ee29b09",
@@ -17,7 +18,7 @@ type Props = {
 export default function Dashboard({ code }: Props): ReactElement {
   const [search, setSearch] = useState<string>("");
   const [selected, setSelected] = useState<Track | null>(null);
-
+  const [lyrics, setLyrics] = useState<string | null>(null);
   const accessToken = useAuth(code);
 
   useEffect(() => {
@@ -39,7 +40,9 @@ export default function Dashboard({ code }: Props): ReactElement {
         spotifyApi={spotifyApi}
         selected={selected}
         setSelected={setSelected}
+        setLyrics={setLyrics}
       />
+      <TrackLyrics selected={selected} lyrics={lyrics} setLyrics={setLyrics} />
       <TrackPlayer
         accessToken={accessToken}
         uri={selected !== null ? selected.uri : ""}
