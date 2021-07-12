@@ -12,6 +12,12 @@ body {
   letter-spacing: 0.6px;
   background-color: #111827;
   color: #F9FAFB;
+  margin: 0;
+} 
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 code {
