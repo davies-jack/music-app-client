@@ -1,6 +1,14 @@
 import axios from "axios";
 import { useState, useEffect, ReactElement } from "react";
+import styled from "styled-components";
 import { Track } from "../../types/Track";
+
+const StyledLyrics = styled.div`
+  white-space: pre;
+  text-align: center;
+  margin: 1em 0 5% 0;
+  line-height: 1.4em;
+`;
 
 export default function TrackLyrics({
   selected,
@@ -31,5 +39,5 @@ export default function TrackLyrics({
   }, [selected]);
 
   if (isLoading && selected) return <div>Loading...</div>;
-  return <div>{lyrics}</div>;
+  return <StyledLyrics>{lyrics}</StyledLyrics>;
 }
